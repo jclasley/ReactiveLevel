@@ -31,34 +31,39 @@ class ViewController: UIViewController {
 		motion.startDeviceMotionUpdates()
 		let gyroTimer = Timer(fire: Date(), interval: 1/60, repeats: true, block: { timer in
 			if let attitude = motion.deviceMotion?.attitude {
-				_ = pitch.map( { (self.positiveMax!.y + CGFloat($0)*self.positiveMax!.y) / 2 })
+				let yModifier: CGFloat = 1.3
+				
+				_ = pitch.map( { (self.positiveMax!.y + CGFloat($0)*self.positiveMax!.y * yModifier) })
+					.map( {$0 / 2} )
 					.subscribe(onNext: { centerY in
 						// not too high so the dot is offscreen
-						let modifiedCenter = centerY * 1.3
-						guard modifiedCenter < self.positiveMax.y else {
+						
+						guard centerY < self.positiveMax.y else {
 							self.levelDot.center.y = self.positiveMax.y
 							return
 						}
-						guard modifiedCenter > 0 else {
+						guard centerY > 0 else {
 							self.levelDot.center.y = 0
 							return
 						}
-						self.levelDot.center.y = modifiedCenter
+						self.levelDot.center.y = centerY
 						
 					})
 				pitch.onNext(attitude.pitch)
-				_ = roll.map( { (self.positiveMax!.x + CGFloat($0)*self.positiveMax!.x) / 2})
+				
+				let xModifier: CGFloat = 1.15
+				_ = roll.map( { (self.positiveMax!.x + CGFloat($0)*self.positiveMax!.x*xModifier) })
+					.map({ $0 / 2 })
 					.subscribe(onNext: { centerX in
-						let modifiedCenter = centerX * 1.2
-						guard modifiedCenter < self.positiveMax.x else {
+						guard centerX < self.positiveMax.x else {
 							self.levelDot.center.x = self.positiveMax.x
 							return
 						}
-						guard modifiedCenter > 0 else {
+						guard centerX > 0 else {
 							self.levelDot.center.x = 0
 							return
 						}
-						self.levelDot.center.x = modifiedCenter
+						self.levelDot.center.x = centerX
 					})
 				roll.onNext(attitude.roll)
 				
