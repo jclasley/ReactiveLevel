@@ -43,7 +43,7 @@ class ViewController: UIViewController {
 							self.levelDot.center.y = 0
 							return
 						}
-						self.levelDot.center.y = centerY
+						self.levelDot.center.y = modifiedCenter
 						
 					})
 				pitch.onNext(attitude.pitch)
@@ -58,7 +58,7 @@ class ViewController: UIViewController {
 							self.levelDot.center.x = 0
 							return
 						}
-						self.levelDot.center.x = centerX
+						self.levelDot.center.x = modifiedCenter
 					})
 				roll.onNext(attitude.roll)
 				
